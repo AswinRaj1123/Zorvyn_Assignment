@@ -2,7 +2,7 @@ import { Trash2, Edit2 } from 'lucide-react';
 import useStore from '../../store/useStore';
 import Card from '../ui/Card';
 
-const TransactionTable = () => {
+const TransactionTable = ({ openEditModal }) => {
   const { 
     getFilteredTransactions, 
     currentRole, 
@@ -70,6 +70,7 @@ const TransactionTable = () => {
                     <td className="py-5">
                       <div className="flex justify-end gap-2">
                         <button 
+                          onClick={() => openEditModal(transaction)}
                           className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
                         >
                           <Edit2 size={18} />
