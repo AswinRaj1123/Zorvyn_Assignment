@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import useStore from './store/useStore';
+import SummaryCard from './components/dashboard/SummaryCard';
+import FinanceCharts from './components/dashboard/FinanceCharts';
+import Card from './components/ui/Card';
 
 function App() {
   const {
@@ -10,17 +13,26 @@ function App() {
     setRole,
     darkMode,
     toggleDarkMode,
+    transactions,
   } = useStore();
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // keep local for mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Sync dark mode on load
+  // Calculate Summary
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpense = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalBalance = totalIncome - totalExpense;
+
+  // Sync dark mode
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    if (darkMode) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
   }, [darkMode]);
 
   const navItems = [
@@ -31,7 +43,7 @@ function App() {
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200`}>
-      {/* Header */}
+      {/* Header - Same as Day 2 */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -45,7 +57,6 @@ function App() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Role Switch */}
             <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-2xl text-sm">
               <span className="text-gray-500 dark:text-gray-400">Role:</span>
               <select
@@ -58,7 +69,6 @@ function App() {
               </select>
             </div>
 
-            {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
               className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-95"
@@ -66,7 +76,6 @@ function App() {
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
-            {/* Mobile Menu */}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="lg:hidden p-3"
@@ -78,7 +87,7 @@ function App() {
       </header>
 
       <div className="flex max-w-7xl mx-auto">
-        {/* Sidebar */}
+        {/* Sidebar - Same as Day 2 */}
         <aside className={`${isSidebarOpen ? 'block' : 'hidden'} lg:block w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-[calc(100vh-73px)] p-6`}>
           <nav className="space-y-1">
             {navItems.map((item) => (
@@ -99,28 +108,50 @@ function App() {
               </button>
             ))}
           </nav>
-
-          <div className="absolute bottom-8 px-6 text-xs text-gray-400 dark:text-gray-500">
-            Zorvyn FinTech Pvt. Ltd.<br />
-            Assignment • 2026
-          </div>
         </aside>
 
         {/* Main Content */}
         <main className="flex-1 p-6 lg:p-8">
-          <div className="mb-10">
-            <h2 className="text-3xl font-semibold capitalize tracking-tight">{activeTab}</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1.5">
-              {activeTab === 'dashboard' && 'Your financial overview at a glance'}
-              {activeTab === 'transactions' && 'Track and manage all your transactions'}
-              {activeTab === 'insights' && 'Smart insights from your spending patterns'}
-            </p>
-          </div>
+          {activeTab === 'dashboard' && (
+            <>
+              <div className="mb-10">
+                <h2 className="text-3xl font-semibold tracking-tight">Dashboard</h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-1.5">Your financial overview at a glance</p>
+              </div>
 
-          {/* Placeholder for now */}
-          <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-16 text-center">
-            <p className="text-2xl mb-3">✅ Complete</p>
-          </div>
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <SummaryCard 
+                  title="Total Balance" 
+                  value={totalBalance} 
+                  change={12} 
+                />
+                <SummaryCard 
+                  title="Total Income" 
+                  value={totalIncome} 
+                  change={8} 
+                />
+                <SummaryCard 
+                  title="Total Expenses" 
+                  value={totalExpense} 
+                  change={-5} 
+                />
+              </div>
+
+              {/* Charts */}
+              <FinanceCharts transactions={transactions} />
+            </>
+          )}
+
+          {activeTab === 'transactions' && (
+            <div className="bg-white dark:bg-gray-900 rounded-3xl p-12 text-center border border-gray-100 dark:border-gray-800">
+            </div>
+          )}
+
+          {activeTab === 'insights' && (
+            <div className="bg-white dark:bg-gray-900 rounded-3xl p-12 text-center border border-gray-100 dark:border-gray-800">
+            </div>
+          )}
         </main>
       </div>
     </div>
