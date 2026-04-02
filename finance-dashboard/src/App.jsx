@@ -5,7 +5,8 @@ import SummaryCard from './components/dashboard/SummaryCard';
 import FinanceCharts from './components/dashboard/FinanceCharts';
 import TransactionTable from './components/transactions/TransactionTable';
 import TransactionFilters from './components/transactions/TransactionFilters';
-import Card from './components/ui/Card';
+import Modal from './components/ui/Modal';
+import TransactionForm from './components/transactions/TransactionForm';
 
 function App() {
   const {
@@ -16,10 +17,13 @@ function App() {
     darkMode,
     toggleDarkMode,
     transactions,
-    addTransaction, // we'll use this on Day 5
+    addTransaction,
+    deleteTransaction,
   } = useStore();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null);
 
   // Summary calculations
   const totalIncome = transactions
@@ -42,6 +46,28 @@ function App() {
     { id: 'transactions', label: 'Transactions', icon: '💰' },
     { id: 'insights', label: 'Insights', icon: '📈' },
   ];
+
+  const openAddModal = () => {
+    setEditingTransaction(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (transaction) => {
+    setEditingTransaction(transaction);
+    setIsModalOpen(true);
+  };
+
+  const handleFormSubmit = (formData) => {
+    if (editingTransaction) {
+      // For simplicity, we'll delete old and add new (update logic can be enhanced later)
+      deleteTransaction(editingTransaction.id);
+      addTransaction(formData);
+    } else {
+      addTransaction(formData);
+    }
+    setIsModalOpen(false);
+    setEditingTransaction(null);
+  };
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200`}>
@@ -69,7 +95,7 @@ function App() {
               </select>
             </div>
 
-            <button onClick={toggleDarkMode} className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800">
+            <button onClick={toggleDarkMode} className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
@@ -130,27 +156,51 @@ function App() {
                 
                 {currentRole === 'admin' && (
                   <button 
-                    onClick={() => alert("Add Transaction Modal - Coming on Day 5")}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-medium transition-colors"
+                    onClick={openAddModal}
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-medium transition-all active:scale-95"
                   >
                     <Plus size={20} />
                     Add Transaction
                   </button>
                 )}
+                {currentRole === 'viewer' && (
+                  <div className="text-sm text-gray-500 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-2xl">
+                    Viewer mode: Read-only
+                  </div>
+                )}
               </div>
 
               <TransactionFilters />
-              <TransactionTable />
+              <TransactionTable openEditModal={openEditModal} />   {/* We'll update table next */}
             </>
           )}
 
           {activeTab === 'insights' && (
-            <Card className="p-16 text-center">
-              <p className="text-xl text-gray-400">Insights Section</p>
-            </Card>
+            <div className="bg-white dark:bg-gray-900 rounded-3xl p-16 text-center border border-gray-100 dark:border-gray-800">
+              <p className="text-xl text-gray-400">Insights Section - Coming Tomorrow (Day 6)</p>
+            </div>
           )}
         </main>
       </div>
+
+      {/* Add/Edit Modal */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingTransaction(null);
+        }} 
+        title={editingTransaction ? "Edit Transaction" : "Add New Transaction"}
+      >
+        <TransactionForm 
+          initialData={editingTransaction}
+          onSubmit={handleFormSubmit}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setEditingTransaction(null);
+          }}
+        />
+      </Modal>
     </div>
   );
 }
