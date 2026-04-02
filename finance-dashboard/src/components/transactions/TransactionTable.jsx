@@ -1,4 +1,5 @@
 import { Trash2, Edit2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import useStore from '../../store/useStore';
 import Card from '../ui/Card';
 
@@ -52,8 +53,14 @@ const TransactionTable = ({ openEditModal }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {filteredTransactions.map((transaction) => (
-                <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+              {filteredTransactions.map((transaction, index) => (
+                <motion.tr 
+                  key={transaction.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                >
                   <td className="py-5 text-sm text-gray-600 dark:text-gray-400">
                     {formatDate(transaction.date)}
                   </td>
@@ -88,7 +95,7 @@ const TransactionTable = ({ openEditModal }) => {
                       </div>
                     </td>
                   )}
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>

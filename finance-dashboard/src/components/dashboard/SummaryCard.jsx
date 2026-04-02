@@ -5,7 +5,7 @@ const SummaryCard = ({ title, value, change, type }) => {
   const isPositive = change > 0;
   
   return (
-    <Card>
+    <Card delay={0.1}>
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
@@ -24,7 +24,7 @@ const SummaryCard = ({ title, value, change, type }) => {
         </div>
       </div>
     </Card>
-  );
+  )
 };
 
 export default SummaryCard;

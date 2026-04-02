@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Menu, X, Sun, Moon, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import useStore from './store/useStore';
 import SummaryCard from './components/dashboard/SummaryCard';
 import FinanceCharts from './components/dashboard/FinanceCharts';
@@ -7,6 +8,7 @@ import TransactionTable from './components/transactions/TransactionTable';
 import TransactionFilters from './components/transactions/TransactionFilters';
 import Modal from './components/ui/Modal';
 import TransactionForm from './components/transactions/TransactionForm';
+import InsightsSection from './components/insights/InsightsSection';
 
 function App() {
   const {
@@ -107,13 +109,22 @@ function App() {
       </header>
 
       <div className="flex max-w-7xl mx-auto">
-        {/* Sidebar */}
-        <aside className={`${isSidebarOpen ? 'block' : 'hidden'} lg:block w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-[calc(100vh-73px)] p-6`}>
-          <nav className="space-y-1">
-            {navItems.map((item) => (
-              <button
+        {/* Sidebar - Improved for mobile */}
+        <aside 
+          className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 lg:translate-x-0 p-6 overflow-y-auto
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        >
+          <nav className="space-y-1 pt-4 lg:pt-0">
+            {navItems.map((item, index) => (
+              <motion.button
                 key={item.id}
-                onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => { 
+                  setActiveTab(item.id); 
+                  setIsSidebarOpen(false); 
+                }}
                 className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-left transition-all ${
                   activeTab === item.id
                     ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 font-semibold'
@@ -121,14 +132,27 @@ function App() {
                 }`}
               >
                 <span className="text-2xl opacity-80">{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
+                <span className="text-[15px]">{item.label}</span>
+              </motion.button>
             ))}
           </nav>
+
+          <div className="mt-12 text-xs text-gray-400 dark:text-gray-500 px-4 hidden lg:block">
+            Zorvyn FinTech Pvt. Ltd.<br />
+            Assignment Dashboard
+          </div>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 lg:p-8">
+        {/* Overlay for mobile when sidebar is open */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 min-h-screen">
           {activeTab === 'dashboard' && (
             <>
               <div className="mb-10">
@@ -175,11 +199,7 @@ function App() {
             </>
           )}
 
-          {activeTab === 'insights' && (
-            <div className="bg-white dark:bg-gray-900 rounded-3xl p-16 text-center border border-gray-100 dark:border-gray-800">
-              <p className="text-xl text-gray-400">Insights Section - Coming Tomorrow (Day 6)</p>
-            </div>
-          )}
+          {activeTab === 'insights' && <InsightsSection />}
         </main>
       </div>
 

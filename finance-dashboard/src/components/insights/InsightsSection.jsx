@@ -1,0 +1,140 @@
+import { useMemo } from 'react';
+import useStore from '../../store/useStore';
+import InsightCard from './InsightCard';
+import Card from '../ui/Card';
+
+const InsightsSection = () => {
+  const { transactions, getFilteredTransactions } = useStore();
+
+  const insights = useMemo(() => {
+    const filtered = getFilteredTransactions();
+    if (filtered.length === 0) return null;
+
+    // 1. Highest Spending Category
+    const expenseByCategory = {};
+    filtered
+      .filter(t => t.type === 'expense')
+      .forEach(t => {
+        expenseByCategory[t.category] = (expenseByCategory[t.category] || 0) + t.amount;
+      });
+
+    const highestSpendingCategory = Object.entries(expenseByCategory)
+      .sort((a, b) => b[1] - a[1])[0];
+
+    // 2. This Month vs Last Month (simplified comparison)
+    const currentMonthExpenses = filtered
+      .filter(t => t.type === 'expense' && t.date.startsWith('2026-03'))
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const previousMonthExpenses = filtered
+      .filter(t => t.type === 'expense' && t.date.startsWith('2026-02'))
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const monthlyChange = previousMonthExpenses 
+      ? Math.round(((currentMonthExpenses - previousMonthExpenses) / previousMonthExpenses) * 100) 
+      : 0;
+
+    // 3. Total Income this period
+    const totalIncomeThisPeriod = filtered
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    // 4. Average Transaction Size
+    const avgTransaction = filtered.length 
+      ? Math.round(filtered.reduce((sum, t) => sum + t.amount, 0) / filtered.length) 
+      : 0;
+
+    return {
+      highestSpending: highestSpendingCategory 
+        ? { category: highestSpendingCategory[0], amount: highestSpendingCategory[1] } 
+        : null,
+      monthlyComparison: {
+        current: currentMonthExpenses,
+        change: monthlyChange
+      },
+      totalIncome: totalIncomeThisPeriod,
+      avgTransaction,
+      totalTransactions: filtered.length,
+      savingsRate: totalIncomeThisPeriod > 0 
+        ? Math.round(((totalIncomeThisPeriod - currentMonthExpenses) / totalIncomeThisPeriod) * 100) 
+        : 0
+    };
+  }, [transactions]); // Re-calculate when transactions change
+
+  if (!insights) {
+    return (
+      <Card className="p-16 text-center">
+        <p className="text-xl text-gray-400">No data available for insights</p>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-3xl font-semibold tracking-tight mb-2">Financial Insights</h2>
+        <p className="text-gray-500 dark:text-gray-400">Key observations from your spending patterns</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Highest Spending Category */}
+        {insights.highestSpending && (
+          <InsightCard 
+            title="Highest Spending Category"
+            value={`₹${insights.highestSpending.amount.toLocaleString('en-IN')}`}
+            description={`You spent the most on ${insights.highestSpending.category} this period.`}
+            icon="📊"
+          />
+        )}
+
+        {/* Monthly Comparison */}
+        <InsightCard 
+          title="Monthly Expense Trend"
+          value={`${insights.monthlyComparison.change > 0 ? '+' : ''}${insights.monthlyComparison.change}%`}
+          description={`Compared to last month. ${insights.monthlyComparison.change > 0 ? 'Spending increased.' : 'Good control on expenses!'}`}
+          icon="📅"
+        />
+
+        {/* Savings Rate */}
+        <InsightCard 
+          title="Savings Rate"
+          value={`${insights.savingsRate}%`}
+          description="Of your income this period was saved."
+          icon="💰"
+        />
+
+        {/* Average Transaction */}
+        <InsightCard 
+          title="Average Transaction"
+          value={`₹${insights.avgTransaction.toLocaleString('en-IN')}`}
+          description={`Average size of all transactions (${insights.totalTransactions} total)`}
+          icon="📌"
+        />
+
+        {/* Total Income */}
+        <InsightCard 
+          title="Total Income"
+          value={`₹${insights.totalIncome.toLocaleString('en-IN')}`}
+          description="Earned during the filtered period"
+          icon="📈"
+        />
+      </div>
+
+      {/* Smart Observation Card */}
+      <Card className="p-8 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-blue-200 dark:border-blue-800">
+        <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+          💡 Smart Observation
+        </h3>
+        <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
+          {insights.savingsRate > 30 
+            ? "You're maintaining excellent financial discipline with a strong savings rate. Keep it up!"
+            : insights.monthlyComparison.change < -10
+            ? "Great job! Your expenses have reduced significantly compared to last month."
+            : "Consider reviewing your spending on Food and Utilities categories as they appear frequently."}
+        </p>
+      </Card>
+    </div>
+  );
+};
+
+export default InsightsSection;
