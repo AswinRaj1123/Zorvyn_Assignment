@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 
+/*
+Toggle the application between light mode and dark mode.
+Uses darkMode boolean and onClick callback.
+Renders an animated theme switch and triggers onClick when pressed.
+*/
 const ThemeToggle = ({ darkMode, onClick }) => {
   return (
     <motion.button
@@ -14,7 +19,7 @@ const ThemeToggle = ({ darkMode, onClick }) => {
       }`}
       whileTap={{ scale: 0.97 }}
     >
-      {/* Side icon */}
+      {/* Small icon on the opposite side, to hint the next theme state. */}
       <motion.div
         className="absolute top-1/2 -translate-y-1/2 flex items-center justify-center w-5 sm:w-6 h-5 sm:h-6 rounded-full"
         initial={false}
@@ -31,6 +36,7 @@ const ThemeToggle = ({ darkMode, onClick }) => {
         }}
       />
 
+      {/* Icon near the moving handle */}
       <motion.div
         className="absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-5 sm:w-6 h-5 sm:h-6"
         animate={{
@@ -43,6 +49,7 @@ const ThemeToggle = ({ darkMode, onClick }) => {
         {darkMode ? <Sun size={12} strokeWidth={2.2} /> : <Moon size={12} strokeWidth={2.2} />}
       </motion.div>
 
+      {/* Main moving handle */}
       <motion.div
         className="absolute top-1/2 z-20 -translate-y-1/2 rounded-full"
         initial={false}

@@ -3,9 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-// Initialize dark mode from localStorage before React renders to prevent flash
+/*
+Apply the correct theme before React renders, so users do not see a flash of the wrong mode.
+Reads persisted state from localStorage.
+Updates html/body theme classes and colors before app mount.
+*/
 const initializeDarkMode = () => {
   try {
+    // We read the current storage key and keep support for the old one so existing users keep their settings.
     const newStorageKey = 'nexvest-finance-storage';
     const oldStorageKey = 'zorvyn-finance-storage';
     let storedState = localStorage.getItem(newStorageKey);
@@ -20,6 +25,7 @@ const initializeDarkMode = () => {
     }
 
     if (storedState) {
+      // If dark mode was saved previously, we apply dark styles on first paint.
       const state = JSON.parse(storedState);
       if (state.state && state.state.darkMode) {
         document.documentElement.classList.add('dark');
@@ -41,8 +47,10 @@ const initializeDarkMode = () => {
   }
 };
 
+// Ensure first paint already matches saved theme.
 initializeDarkMode();
 
+// Mount the full React application into the page.
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

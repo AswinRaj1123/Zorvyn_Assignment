@@ -16,6 +16,11 @@ import transactionIcon from './assets/transaction.svg';
 import insightIcon from './assets/insight.svg';
 import brandLogo from './assets/NexVest Logo.png';
 
+/*
+Main screen container that connects store state to all major UI sections.
+No direct props; reads shared state from the store.
+Renders header, sidebar navigation, tab content, and transaction modal.
+*/
 function App() {
   const {
     activeTab,
@@ -33,7 +38,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
-  // Summary calculations
+  // Derive totals for dashboard summary cards from current transaction data.
   const totalIncome = transactions
     .filter(t => t.type === 'income')
     .reduce((sum, t) => sum + t.amount, 0);
@@ -44,7 +49,11 @@ function App() {
 
   const totalBalance = totalIncome - totalExpense;
 
-  // Sync dark mode on load and when it changes
+  /*
+  Keep document-level theme classes/colors in sync with current darkMode state.
+  Uses darkMode value from shared store.
+  Updates html/body classes and base colors.
+  */
   useEffect(() => {
     const htmlElement = document.documentElement;
     if (darkMode) {
@@ -64,16 +73,30 @@ function App() {
     { id: 'insights', label: 'Insights', icon: insightIcon },
   ];
 
+  /*
+  Open transaction modal for creating a new entry.
+  Clears editing state and opens modal.
+  */
   const openAddModal = () => {
     setEditingTransaction(null);
     setIsModalOpen(true);
   };
 
+  /*
+  Open transaction modal pre-filled with an existing transaction.
+  Uses selected transaction from the table.
+  Sets editing state and opens modal.
+  */
   const openEditModal = (transaction) => {
     setEditingTransaction(transaction);
     setIsModalOpen(true);
   };
 
+  /*
+  Save submitted transaction data for both add and edit flows.
+  Uses formData from TransactionForm.
+  Updates transaction list and closes/reset modal state.
+  */
   const handleFormSubmit = (formData) => {
     if (editingTransaction) {
       // For simplicity, we'll delete old and add new (update logic can be enhanced later)
@@ -91,6 +114,7 @@ function App() {
       {/* Header */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+          {/* Brand logo */}
           <div className="flex items-center">
             <img
               src={brandLogo}
@@ -100,11 +124,13 @@ function App() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
+            {/* Role switch changes what actions are available in the UI. */}
             <RoleToggle currentRole={currentRole} setRole={setRole} darkMode={darkMode} />
 
             {/* Dark Mode Toggle */}
             <ThemeToggle darkMode={darkMode} onClick={toggleDarkMode} />
 
+            {/* Mobile-only button for opening/closing sidebar navigation. */}
             <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden p-2">
               {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -169,6 +195,7 @@ function App() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 min-h-screen">
+          {/* Dashboard tab */}
           {activeTab === 'dashboard' && (
             <>
               <div className="mb-10">
@@ -186,6 +213,7 @@ function App() {
             </>
           )}
 
+          {/* Transactions tab */}
           {activeTab === 'transactions' && (
             <>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -233,6 +261,7 @@ function App() {
             </>
           )}
 
+          {/* Insights tab */}
           {activeTab === 'insights' && <InsightsSection />}
         </main>
       </div>

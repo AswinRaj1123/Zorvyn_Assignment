@@ -10,20 +10,31 @@ import totalIncomeIcon from '../../assets/total_income.svg';
 import smartObservationIcon from '../../assets/observation.svg';
 import smartObservationIllustration from '../../assets/observation_illustration.png';
 
+/*
+Generate and present high-level financial insights from visible transactions.
+Uses filtered transaction list from shared store selector.
+Renders insight cards and smart observation content.
+*/
 const InsightsSection = () => {
   const { getFilteredTransactions } = useStore();
 
   const insights = useMemo(() => {
+    /*
+    Build a month key for month-to-month comparisons.
+    Uses a JavaScript Date object.
+    Returns a string in YYYY-MM format.
+    */
     const getMonthKey = (date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       return `${year}-${month}`;
     };
 
+    // Start with currently visible (already filtered) transaction records.
     const filtered = getFilteredTransactions();
     if (filtered.length === 0) return null;
 
-    // 1. Highest Spending Category
+    // 1) Find which expense category has the highest total spend.
     const expenseByCategory = {};
     filtered
       .filter(t => t.type === 'expense')
@@ -34,7 +45,7 @@ const InsightsSection = () => {
     const highestSpendingCategory = Object.entries(expenseByCategory)
       .sort((a, b) => b[1] - a[1])[0];
 
-    // 2. This Month vs Last Month
+    // 2) Compare this month's expenses against last month.
     const now = new Date();
     const currentMonthKey = getMonthKey(now);
     const previousMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -52,12 +63,12 @@ const InsightsSection = () => {
       ? Math.round(((currentMonthExpenses - previousMonthExpenses) / previousMonthExpenses) * 100) 
       : 0;
 
-    // 3. Total Income this period
+    // 3) Total income within the currently filtered period.
     const totalIncomeThisPeriod = filtered
       .filter(t => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
 
-    // 4. Average Transaction Size
+    // 4) Average amount across all visible transactions.
     const avgTransaction = filtered.length 
       ? Math.round(filtered.reduce((sum, t) => sum + t.amount, 0) / filtered.length) 
       : 0;
@@ -77,7 +88,7 @@ const InsightsSection = () => {
         ? Math.round(((totalIncomeThisPeriod - currentMonthExpenses) / totalIncomeThisPeriod) * 100) 
         : 0
     };
-  }, [getFilteredTransactions]); // Re-calculate when filtered data source changes
+  }, [getFilteredTransactions]); // Recalculate whenever visible transaction data changes.
 
   if (!insights) {
     return (
@@ -95,7 +106,7 @@ const InsightsSection = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Highest Spending Category */}
+        {/* Insight cards: each card explains one metric in plain terms. */}
         {insights.highestSpending && (
           <InsightCard 
             title="Highest Spending Category"

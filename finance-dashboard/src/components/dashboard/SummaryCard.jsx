@@ -1,7 +1,13 @@
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import Card from '../ui/Card';
 
+/*
+Display one summary metric with value and change indicator.
+Uses title string, value number, and change percentage number.
+Renders a styled summary card with positive/negative visual cues.
+*/
 const SummaryCard = ({ title, value, change }) => {
+  // Decide whether this metric should be shown as positive or negative.
   const isPositive = change > 0;
   
   return (

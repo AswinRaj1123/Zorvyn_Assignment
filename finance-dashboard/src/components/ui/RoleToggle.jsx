@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
 
+/*
+Let users switch between Admin and Viewer roles from the header.
+Uses currentRole, setRole callback, and darkMode flag.
+Renders a two-option animated toggle and updates role on click.
+*/
 const RoleToggle = ({ currentRole, setRole, darkMode }) => {
+  // Visual style for the moving highlighted pill.
   const rolePillStyle = {
     backgroundColor: darkMode ? '#1a2f54' : '#f3f4f6',
     boxShadow: darkMode
@@ -8,6 +14,11 @@ const RoleToggle = ({ currentRole, setRole, darkMode }) => {
       : '0 3px 10px rgba(17, 24, 39, 0.16), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
   };
 
+  /*
+  Pick the correct text color for each role label.
+  Uses role string ('admin' or 'viewer').
+  Returns the Tailwind class string for that label state.
+  */
   const getRoleLabelClass = (role) => {
     if (currentRole === role) {
       return darkMode ? 'text-blue-200' : 'text-blue-700';
@@ -18,6 +29,7 @@ const RoleToggle = ({ currentRole, setRole, darkMode }) => {
   return (
     <div className="flex items-center gap-2">
       <span className="hidden sm:inline text-sm text-gray-500 dark:text-gray-400">Role</span>
+      {/* Track background for the role switch */}
       <div
         className={`relative w-20 sm:w-24 h-9 sm:h-10 rounded-full p-1 border shadow-inner transition-all duration-300 ${
           darkMode
@@ -34,6 +46,7 @@ const RoleToggle = ({ currentRole, setRole, darkMode }) => {
             className={`relative rounded-full transition-colors ${getRoleLabelClass('admin')}`}
             aria-pressed={currentRole === 'admin'}
           >
+            {/* Moving highlight appears under the selected option */}
             {currentRole === 'admin' && (
               <motion.span
                 layoutId="role-toggle-pill"
@@ -50,6 +63,7 @@ const RoleToggle = ({ currentRole, setRole, darkMode }) => {
             className={`relative rounded-full transition-colors ${getRoleLabelClass('viewer')}`}
             aria-pressed={currentRole === 'viewer'}
           >
+            {/* Same highlight animation for the second option */}
             {currentRole === 'viewer' && (
               <motion.span
                 layoutId="role-toggle-pill"

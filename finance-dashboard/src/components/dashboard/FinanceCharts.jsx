@@ -3,6 +3,11 @@ import Card from '../ui/Card';
 
 const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#8b5cf6', '#f59e0b'];
 
+/*
+Show dashboard charts for balance trend and category spending breakdown.
+Uses transactions array from shared state.
+Renders line chart and pie chart cards using prepared chart data.
+*/
 const FinanceCharts = ({ transactions }) => {
   // Prepare data for Balance Trend (Last 7 days - simplified)
   const balanceTrendData = [
@@ -15,7 +20,7 @@ const FinanceCharts = ({ transactions }) => {
     { day: 'Mar 28', balance: 185000 },
   ];
 
-  // Spending Breakdown by Category (only expenses)
+  // Converts expense transactions into category totals for the pie chart.
   const expenseData = transactions
     .filter(t => t.type === 'expense')
     .reduce((acc, curr) => {
@@ -30,7 +35,7 @@ const FinanceCharts = ({ transactions }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Balance Trend - Line Chart */}
+      {/* Line chart: shows a quick trend of account balance over time. */}
       <Card className="lg:col-span-1">
         <h3 className="text-lg font-semibold mb-6">Balance Trend</h3>
         <div className="h-80">
@@ -60,7 +65,7 @@ const FinanceCharts = ({ transactions }) => {
         </div>
       </Card>
 
-      {/* Spending Breakdown - Pie Chart */}
+      {/* Pie chart: shows how spending is distributed by category. */}
       <Card>
         <h3 className="text-lg font-semibold mb-6">Spending Breakdown</h3>
         <div className="h-80 flex items-center justify-center">

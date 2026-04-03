@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { categories } from '../../data/mockData';
 
+/*
+Capture transaction details for both add and edit flows.
+Uses initialData (optional), onSubmit callback, and onCancel callback.
+Renders the form UI and sends validated payload back to parent.
+*/
 const TransactionForm = ({ initialData = null, onSubmit, onCancel }) => {
+  // Pre-fill fields when editing; otherwise start with empty/default values.
   const [formData, setFormData] = useState({
     description: initialData?.description || '',
     amount: initialData?.amount || '',
@@ -10,6 +16,11 @@ const TransactionForm = ({ initialData = null, onSubmit, onCancel }) => {
     date: initialData?.date || new Date().toISOString().split('T')[0],
   });
 
+  /*
+  Validate and submit form values.
+  Uses browser submit event.
+  Calls onSubmit with normalized data or shows validation alert.
+  */
   const handleSubmit = (e) => {
     e.preventDefault();
     
@@ -24,6 +35,11 @@ const TransactionForm = ({ initialData = null, onSubmit, onCancel }) => {
     });
   };
 
+  /*
+  Update form field value in component state.
+  Uses browser change event from any input/select.
+  Updates matching field in formData state.
+  */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));

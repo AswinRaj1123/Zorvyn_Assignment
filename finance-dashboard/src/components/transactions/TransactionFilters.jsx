@@ -1,6 +1,11 @@
 import useStore from '../../store/useStore';
 import { categories } from '../../data/mockData';
 
+/*
+Provide controls to narrow transaction results by search, date range, type, and category.
+Uses current filter state and filter actions from shared store.
+Renders filter controls and updates store when user changes inputs.
+*/
 const TransactionFilters = () => {
   const { filters, updateFilters, resetFilters } = useStore();
 

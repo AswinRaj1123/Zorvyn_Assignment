@@ -3,6 +3,11 @@ import { motion } from 'framer-motion';
 import useStore from '../../store/useStore';
 import Card from '../ui/Card';
 
+/*
+Show filtered transactions in a table and allow admin actions.
+Uses openEditModal callback from parent.
+Renders transaction rows, empty state, and optional admin controls.
+*/
 const TransactionTable = ({ openEditModal }) => {
   const { 
     getFilteredTransactions, 
@@ -12,6 +17,11 @@ const TransactionTable = ({ openEditModal }) => {
 
   const filteredTransactions = getFilteredTransactions();
 
+  /*
+  Convert stored date string into user-friendly display text.
+  Uses dateStr (transaction date value).
+  Returns localized formatted date string.
+  */
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-IN', { 
@@ -21,6 +31,11 @@ const TransactionTable = ({ openEditModal }) => {
     });
   };
 
+  /*
+  Choose amount text color by transaction type.
+  Uses type ('income' or 'expense').
+  Returns CSS class string for amount color.
+  */
   const getAmountColor = (type) => {
     return type === 'income' 
       ? 'text-green-600 dark:text-green-400' 
@@ -37,6 +52,7 @@ const TransactionTable = ({ openEditModal }) => {
       </div>
 
       {filteredTransactions.length === 0 ? (
+        // Empty state shown when no records match current filters.
         <div className="text-center py-20">
           <div className="text-6xl mb-6">📭</div>
           <p className="text-xl font-medium text-gray-400">No transactions found</p>

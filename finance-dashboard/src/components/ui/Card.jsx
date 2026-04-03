@@ -1,5 +1,10 @@
 import { motion } from 'framer-motion';
 
+/*
+Provide a reusable visual container with consistent spacing, border, and motion.
+Uses children content, optional className, and optional animation delay.
+Renders a styled card wrapper around any nested content.
+*/
 const Card = ({ children, className = "", delay = 0 }) => {
   return (
     <motion.div 

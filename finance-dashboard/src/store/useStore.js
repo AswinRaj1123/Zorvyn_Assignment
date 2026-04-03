@@ -2,10 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { mockTransactions } from '../data/mockData';
 
+/*
+Centralize shared app state, actions, and persisted preferences.
+Handles role changes, filter updates, CRUD actions, and theme toggle events.
+Provides updated global state to all components.
+*/
 const useStore = create(
   persist(
     (set, get) => ({
-      // State
+      // Core app data used across screens.
       transactions: mockTransactions,
       currentRole: 'admin',        // 'admin' or 'viewer'
       darkMode: false,
@@ -17,11 +22,13 @@ const useStore = create(
         period: 'all'              // we'll use this later
       },
 
-      // Actions
+      // Switch the active tab shown in the main content area.
       setActiveTab: (tab) => set({ activeTab: tab }),
 
+      // Save the selected UI role (admin/viewer).
       setRole: (role) => set({ currentRole: role }),
 
+      // Toggle app theme and sync html class immediately.
       toggleDarkMode: () => {
         const newDarkMode = !get().darkMode;
         set({ darkMode: newDarkMode });
@@ -32,6 +39,7 @@ const useStore = create(
         }
       },
 
+      // Add a newly created transaction at the top of the list.
       addTransaction: (newTransaction) => {
         const transaction = {
           ...newTransaction,
@@ -42,18 +50,21 @@ const useStore = create(
         }));
       },
 
+      // Remove a transaction by id.
       deleteTransaction: (id) => {
         set((state) => ({
           transactions: state.transactions.filter((t) => t.id !== id),
         }));
       },
 
+      // Merge changed filter values into existing filter state.
       updateFilters: (newFilters) => {
         set((state) => ({
           filters: { ...state.filters, ...newFilters },
         }));
       },
 
+      // Reset all filter values to defaults.
       resetFilters: () => {
         set({
           filters: {
@@ -65,12 +76,16 @@ const useStore = create(
         });
       },
 
-      // Helper to get filtered transactions (we'll use this in components)
+      /*
+      Return transactions after applying active filter rules.
+      Uses current transactions and filters from the store.
+      Returns a filtered and date-sorted transaction array for UI rendering.
+      */
       getFilteredTransactions: () => {
         const { transactions, filters } = get();
         let filtered = [...transactions];
 
-        // Search filter
+        // Search by description text.
         if (filters.search) {
           const searchLower = filters.search.toLowerCase();
           filtered = filtered.filter((t) =>
@@ -78,17 +93,17 @@ const useStore = create(
           );
         }
 
-        // Type filter
+        // Keep only income or expense when that filter is selected.
         if (filters.type !== 'all') {
           filtered = filtered.filter((t) => t.type === filters.type);
         }
 
-        // Category filter
+        // Keep only transactions from the selected category.
         if (filters.category !== 'all') {
           filtered = filtered.filter((t) => t.category === filters.category);
         }
 
-        // Period filter
+        // Keep only records from the selected time window.
         const now = new Date();
         if (filters.period === 'thisMonth') {
           filtered = filtered.filter((t) => {
@@ -102,14 +117,16 @@ const useStore = create(
           filtered = filtered.filter((t) => new Date(t.date) >= threeMonthsAgo);
         }
 
-        // Sort by date (newest first)
+        // Newest records are shown first.
         filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         return filtered;
       },
     }),
     {
-      name: 'nexvest-finance-storage',   // localStorage key
+      // Local storage key so data survives page reloads.
+      name: 'nexvest-finance-storage',
+      // Only save user-specific data that should persist between sessions.
       partialize: (state) => ({
         transactions: state.transactions,
         currentRole: state.currentRole,

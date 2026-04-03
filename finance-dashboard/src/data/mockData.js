@@ -1,3 +1,8 @@
+/*
+Provide sample transactions so the UI can be demonstrated without a backend.
+This is static seed data.
+Exported transaction array is consumed by the store as initial state.
+*/
 export const mockTransactions = [
   {
     id: 1,
@@ -79,7 +84,7 @@ export const mockTransactions = [
     type: "expense",
     category: "Food",
   },
-  // Add more to make it realistic (total ~25 entries)
+  // Additional sample entries to better mimic real-world usage.
   {
     id: 11,
     date: "2026-03-18",
@@ -122,6 +127,11 @@ export const mockTransactions = [
   },
 ];
 
+/*
+Define the category options used across forms and filters.
+This is a static list.
+Exported category array is used by dropdown controls.
+*/
 export const categories = [
   "Salary", "Freelance", "Business", "Investment",
   "Food", "Transport", "Utilities", "Rent",

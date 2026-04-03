@@ -1,5 +1,10 @@
 import Card from '../ui/Card';
 
+/*
+Display one insight metric with title, value, icon, and explanation.
+Uses title, value, description, and icon source.
+Renders a reusable insight card block.
+*/
 const InsightCard = ({ title, value, description, icon }) => {
   return (
     <Card className="h-full">
