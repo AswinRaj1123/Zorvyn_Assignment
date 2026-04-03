@@ -1,7 +1,7 @@
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import Card from '../ui/Card';
 
-const SummaryCard = ({ title, value, change, type }) => {
+const SummaryCard = ({ title, value, change }) => {
   const isPositive = change > 0;
   
   return (
@@ -14,7 +14,7 @@ const SummaryCard = ({ title, value, change, type }) => {
           </p>
         </div>
         
-        <div className={`flex items-center gap-1 text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full flex-shrink-0 ${
+        <div className={`flex items-center gap-1 text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full shrink-0 ${
           isPositive 
             ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400' 
             : 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400'

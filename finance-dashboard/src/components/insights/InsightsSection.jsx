@@ -14,6 +14,12 @@ const InsightsSection = () => {
   const { getFilteredTransactions } = useStore();
 
   const insights = useMemo(() => {
+    const getMonthKey = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      return `${year}-${month}`;
+    };
+
     const filtered = getFilteredTransactions();
     if (filtered.length === 0) return null;
 
@@ -28,13 +34,18 @@ const InsightsSection = () => {
     const highestSpendingCategory = Object.entries(expenseByCategory)
       .sort((a, b) => b[1] - a[1])[0];
 
-    // 2. This Month vs Last Month (simplified comparison)
+    // 2. This Month vs Last Month
+    const now = new Date();
+    const currentMonthKey = getMonthKey(now);
+    const previousMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const previousMonthKey = getMonthKey(previousMonthDate);
+
     const currentMonthExpenses = filtered
-      .filter(t => t.type === 'expense' && t.date.startsWith('2026-03'))
+      .filter(t => t.type === 'expense' && t.date.startsWith(currentMonthKey))
       .reduce((sum, t) => sum + t.amount, 0);
 
     const previousMonthExpenses = filtered
-      .filter(t => t.type === 'expense' && t.date.startsWith('2026-02'))
+      .filter(t => t.type === 'expense' && t.date.startsWith(previousMonthKey))
       .reduce((sum, t) => sum + t.amount, 0);
 
     const monthlyChange = previousMonthExpenses 
