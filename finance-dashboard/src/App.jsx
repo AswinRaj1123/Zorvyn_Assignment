@@ -89,20 +89,20 @@ function App() {
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200`}>
       {/* Header */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="flex items-center">
             <img
               src={brandLogo}
               alt="NexVest logo"
-              className="h-10 w-auto object-contain"
+              className="h-8 sm:h-10 w-auto object-contain max-w-28 sm:max-w-40"
             />
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Role</span>
+              <span className="hidden sm:inline text-sm text-gray-500 dark:text-gray-400">Role</span>
               <div
-                className={`relative w-24 h-10 rounded-full p-1 border shadow-inner transition-all duration-300 ${
+                className={`relative w-20 sm:w-24 h-9 sm:h-10 rounded-full p-1 border shadow-inner transition-all duration-300 ${
                   darkMode
                     ? 'bg-[linear-gradient(160deg,#0f1b35_0%,#182b52_55%,#1f3765_100%)] border-[#1b2f56]'
                     : 'bg-[linear-gradient(160deg,#f2f3f5_0%,#e9ebee_100%)] border-[#dadde3]'
@@ -110,26 +110,11 @@ function App() {
                 role="group"
                 aria-label="Select role"
               >
-                <motion.div
-                  className="absolute top-1 left-1 z-10 rounded-full"
-                  initial={false}
-                  animate={{
-                    x: currentRole === 'admin' ? 0 : 44,
-                    width: 44,
-                    height: 32,
-                    backgroundColor: darkMode ? '#1a2f54' : '#f3f4f6',
-                    boxShadow: darkMode
-                      ? '0 6px 14px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.06)'
-                      : '0 3px 10px rgba(17, 24, 39, 0.16), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
-                  }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                />
-
-                <div className="relative z-20 grid grid-cols-2 h-full text-[11px] font-semibold">
+                <div className="relative z-20 grid grid-cols-2 h-full text-[10px] sm:text-[11px] font-semibold">
                   <button
                     type="button"
                     onClick={() => setRole('admin')}
-                    className={`rounded-full transition-colors ${
+                    className={`relative rounded-full transition-colors ${
                       currentRole === 'admin'
                         ? darkMode
                           ? 'text-blue-200'
@@ -140,12 +125,25 @@ function App() {
                     }`}
                     aria-pressed={currentRole === 'admin'}
                   >
-                    Admin
+                    {currentRole === 'admin' && (
+                      <motion.span
+                        layoutId="role-toggle-pill"
+                        className="absolute inset-0 rounded-full"
+                        style={{
+                          backgroundColor: darkMode ? '#1a2f54' : '#f3f4f6',
+                          boxShadow: darkMode
+                            ? '0 6px 14px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.06)'
+                            : '0 3px 10px rgba(17, 24, 39, 0.16), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+                        }}
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    <span className="relative z-10">Admin</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setRole('viewer')}
-                    className={`rounded-full transition-colors ${
+                    className={`relative rounded-full transition-colors ${
                       currentRole === 'viewer'
                         ? darkMode
                           ? 'text-blue-200'
@@ -156,7 +154,20 @@ function App() {
                     }`}
                     aria-pressed={currentRole === 'viewer'}
                   >
-                    Viewer
+                    {currentRole === 'viewer' && (
+                      <motion.span
+                        layoutId="role-toggle-pill"
+                        className="absolute inset-0 rounded-full"
+                        style={{
+                          backgroundColor: darkMode ? '#1a2f54' : '#f3f4f6',
+                          boxShadow: darkMode
+                            ? '0 6px 14px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.06)'
+                            : '0 3px 10px rgba(17, 24, 39, 0.16), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+                        }}
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    <span className="relative z-10">Viewer</span>
                   </button>
                 </div>
               </div>
@@ -165,7 +176,7 @@ function App() {
             {/* Dark Mode Toggle */}
             <ThemeToggle darkMode={darkMode} onClick={toggleDarkMode} />
 
-            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden p-3">
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden p-2">
               {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -276,7 +287,7 @@ function App() {
               <TransactionFilters />
               
               {/* Grouping Toggle - Simple */}
-              <div className="mb-6 flex gap-2">
+              <div className="mb-6 flex flex-wrap gap-2">
                 <button
                   className="px-5 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >

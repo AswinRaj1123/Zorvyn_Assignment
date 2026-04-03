@@ -5,9 +5,9 @@ const TransactionFilters = () => {
   const { filters, updateFilters, resetFilters } = useStore();
 
   return (
-    <div className="flex flex-wrap gap-4 mb-8">
+    <div className="flex flex-wrap gap-3 sm:gap-4 mb-8">
       {/* Search */}
-      <div className="flex-1 min-w-50">
+      <div className="w-full sm:flex-1 sm:min-w-50">
         <input
           type="text"
           placeholder="Search transactions..."
@@ -21,7 +21,7 @@ const TransactionFilters = () => {
       <select
         value={filters.period}
         onChange={(e) => updateFilters({ period: e.target.value })}
-        className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
+        className="w-full sm:w-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
       >
         <option value="all">All Time</option>
         <option value="thisMonth">This Month</option>
@@ -32,7 +32,7 @@ const TransactionFilters = () => {
       <select
         value={filters.type}
         onChange={(e) => updateFilters({ type: e.target.value })}
-        className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
+        className="w-full sm:w-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
       >
         <option value="all">All Types</option>
         <option value="income">Income</option>
@@ -43,7 +43,7 @@ const TransactionFilters = () => {
       <select
         value={filters.category}
         onChange={(e) => updateFilters({ category: e.target.value })}
-        className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
+        className="w-full sm:w-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
       >
         <option value="all">All Categories</option>
         {categories.map(cat => (
@@ -54,7 +54,7 @@ const TransactionFilters = () => {
       {/* Reset */}
       <button
         onClick={resetFilters}
-        className="px-6 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        className="w-full sm:w-auto px-6 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       >
         Reset Filters
       </button>
