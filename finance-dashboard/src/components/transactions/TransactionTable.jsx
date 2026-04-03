@@ -37,8 +37,10 @@ const TransactionTable = ({ openEditModal }) => {
       </div>
 
       {filteredTransactions.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
-          No transactions found matching your filters.
+        <div className="text-center py-20">
+          <div className="text-6xl mb-6">📭</div>
+          <p className="text-xl font-medium text-gray-400">No transactions found</p>
+          <p className="text-gray-500 mt-2">Try changing your filters or add a new transaction.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">

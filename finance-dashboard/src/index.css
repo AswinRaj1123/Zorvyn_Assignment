@@ -1,5 +1,25 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* You can extend colors/fonts here later if needed */
+}
+
+/* Global dark mode styles */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+html:not(.dark) {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

@@ -6,7 +6,7 @@ const TransactionFilters = () => {
 
   return (
     <div className="flex flex-wrap gap-4 mb-8">
-      {/* Search Input */}
+      {/* Search */}
       <div className="flex-1 min-w-50">
         <input
           type="text"
@@ -17,6 +17,17 @@ const TransactionFilters = () => {
         />
       </div>
 
+      {/* Period Filter */}
+      <select
+        value={filters.period}
+        onChange={(e) => updateFilters({ period: e.target.value })}
+        className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
+      >
+        <option value="all">All Time</option>
+        <option value="thisMonth">This Month</option>
+        <option value="last3Months">Last 3 Months</option>
+      </select>
+
       {/* Type Filter */}
       <select
         value={filters.type}
@@ -24,8 +35,8 @@ const TransactionFilters = () => {
         className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3 text-sm focus:outline-none"
       >
         <option value="all">All Types</option>
-        <option value="income">Income Only</option>
-        <option value="expense">Expense Only</option>
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
       </select>
 
       {/* Category Filter */}
@@ -40,12 +51,12 @@ const TransactionFilters = () => {
         ))}
       </select>
 
-      {/* Reset Button */}
+      {/* Reset */}
       <button
         onClick={resetFilters}
         className="px-6 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       >
-        Reset
+        Reset Filters
       </button>
     </div>
   );

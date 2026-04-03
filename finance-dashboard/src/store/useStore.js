@@ -88,6 +88,20 @@ const useStore = create(
           filtered = filtered.filter((t) => t.category === filters.category);
         }
 
+        // Period filter
+        const now = new Date();
+        if (filters.period === 'thisMonth') {
+          filtered = filtered.filter((t) => {
+            const txDate = new Date(t.date);
+            return txDate.getMonth() === now.getMonth() && 
+                   txDate.getFullYear() === now.getFullYear();
+          });
+        } else if (filters.period === 'last3Months') {
+          const threeMonthsAgo = new Date();
+          threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+          filtered = filtered.filter((t) => new Date(t.date) >= threeMonthsAgo);
+        }
+
         // Sort by date (newest first)
         filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -95,7 +109,7 @@ const useStore = create(
       },
     }),
     {
-      name: 'zorvyn-finance-storage',   // localStorage key
+      name: 'nexvest-finance-storage',   // localStorage key
       partialize: (state) => ({
         transactions: state.transactions,
         currentRole: state.currentRole,

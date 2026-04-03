@@ -2,9 +2,16 @@ import { useMemo } from 'react';
 import useStore from '../../store/useStore';
 import InsightCard from './InsightCard';
 import Card from '../ui/Card';
+import highestSpendingCategoryIcon from '../../assets/highest_spending_category.svg';
+import monthlyExpenseTrendIcon from '../../assets/Monthly_expense_trend.svg';
+import savingsRateIcon from '../../assets/savings_rate.svg';
+import averageTransactionIcon from '../../assets/average_transaction.svg';
+import totalIncomeIcon from '../../assets/total_income.svg';
+import smartObservationIcon from '../../assets/observation.svg';
+import smartObservationIllustration from '../../assets/observation_illustration.png';
 
 const InsightsSection = () => {
-  const { transactions, getFilteredTransactions } = useStore();
+  const { getFilteredTransactions } = useStore();
 
   const insights = useMemo(() => {
     const filtered = getFilteredTransactions();
@@ -59,7 +66,7 @@ const InsightsSection = () => {
         ? Math.round(((totalIncomeThisPeriod - currentMonthExpenses) / totalIncomeThisPeriod) * 100) 
         : 0
     };
-  }, [transactions]); // Re-calculate when transactions change
+  }, [getFilteredTransactions]); // Re-calculate when filtered data source changes
 
   if (!insights) {
     return (
@@ -83,7 +90,7 @@ const InsightsSection = () => {
             title="Highest Spending Category"
             value={`₹${insights.highestSpending.amount.toLocaleString('en-IN')}`}
             description={`You spent the most on ${insights.highestSpending.category} this period.`}
-            icon="📊"
+            icon={highestSpendingCategoryIcon}
           />
         )}
 
@@ -92,7 +99,7 @@ const InsightsSection = () => {
           title="Monthly Expense Trend"
           value={`${insights.monthlyComparison.change > 0 ? '+' : ''}${insights.monthlyComparison.change}%`}
           description={`Compared to last month. ${insights.monthlyComparison.change > 0 ? 'Spending increased.' : 'Good control on expenses!'}`}
-          icon="📅"
+          icon={monthlyExpenseTrendIcon}
         />
 
         {/* Savings Rate */}
@@ -100,7 +107,7 @@ const InsightsSection = () => {
           title="Savings Rate"
           value={`${insights.savingsRate}%`}
           description="Of your income this period was saved."
-          icon="💰"
+          icon={savingsRateIcon}
         />
 
         {/* Average Transaction */}
@@ -108,7 +115,7 @@ const InsightsSection = () => {
           title="Average Transaction"
           value={`₹${insights.avgTransaction.toLocaleString('en-IN')}`}
           description={`Average size of all transactions (${insights.totalTransactions} total)`}
-          icon="📌"
+          icon={averageTransactionIcon}
         />
 
         {/* Total Income */}
@@ -116,22 +123,35 @@ const InsightsSection = () => {
           title="Total Income"
           value={`₹${insights.totalIncome.toLocaleString('en-IN')}`}
           description="Earned during the filtered period"
-          icon="📈"
+          icon={totalIncomeIcon}
         />
       </div>
 
       {/* Smart Observation Card */}
       <Card className="p-8 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-blue-200 dark:border-blue-800">
-        <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-          💡 Smart Observation
-        </h3>
-        <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
-          {insights.savingsRate > 30 
-            ? "You're maintaining excellent financial discipline with a strong savings rate. Keep it up!"
-            : insights.monthlyComparison.change < -10
-            ? "Great job! Your expenses have reduced significantly compared to last month."
-            : "Consider reviewing your spending on Food and Utilities categories as they appear frequently."}
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+          <div className="shrink-0">
+            <img
+              src={smartObservationIllustration}
+              alt="Smart observation illustration"
+              className="w-28 h-28 sm:w-32 sm:h-32 object-contain"
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+              <img src={smartObservationIcon} alt="" aria-hidden="true" className="w-6 h-6 opacity-80 dark:invert" />
+              Smart Observation
+            </h3>
+            <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
+              {insights.savingsRate > 30 
+                ? "You're maintaining excellent financial discipline with a strong savings rate. Keep it up!"
+                : insights.monthlyComparison.change < -10
+                ? "Great job! Your expenses have reduced significantly compared to last month."
+                : "Consider reviewing your spending on Food and Utilities categories as they appear frequently."}
+            </p>
+          </div>
+        </div>
       </Card>
     </div>
   );

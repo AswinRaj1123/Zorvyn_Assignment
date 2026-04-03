@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Menu, X, Sun, Moon, Plus } from 'lucide-react';
+import { Menu, X, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useStore from './store/useStore';
 import SummaryCard from './components/dashboard/SummaryCard';
@@ -9,6 +9,11 @@ import TransactionFilters from './components/transactions/TransactionFilters';
 import Modal from './components/ui/Modal';
 import TransactionForm from './components/transactions/TransactionForm';
 import InsightsSection from './components/insights/InsightsSection';
+import ThemeToggle from './components/ui/ThemeToggle';
+import dashboardIcon from './assets/dashboard.svg';
+import transactionIcon from './assets/transaction.svg';
+import insightIcon from './assets/insight.svg';
+import brandLogo from './assets/NexVest Logo.png';
 
 function App() {
   const {
@@ -38,15 +43,24 @@ function App() {
 
   const totalBalance = totalIncome - totalExpense;
 
+  // Sync dark mode on load and when it changes
   useEffect(() => {
-    if (darkMode) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
+    const htmlElement = document.documentElement;
+    if (darkMode) {
+      htmlElement.classList.add('dark');
+      document.body.style.backgroundColor = '#111827'; // gray-950
+      document.body.style.color = '#f3f4f6'; // gray-100
+    } else {
+      htmlElement.classList.remove('dark');
+      document.body.style.backgroundColor = '#f9fafb'; // gray-50
+      document.body.style.color = '#111827'; // gray-900
+    }
   }, [darkMode]);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'transactions', label: 'Transactions', icon: '💰' },
-    { id: 'insights', label: 'Insights', icon: '📈' },
+    { id: 'dashboard', label: 'Dashboard', icon: dashboardIcon },
+    { id: 'transactions', label: 'Transactions', icon: transactionIcon },
+    { id: 'insights', label: 'Insights', icon: insightIcon },
   ];
 
   const openAddModal = () => {
@@ -76,30 +90,80 @@ function App() {
       {/* Header */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">Z</div>
-            <div>
-              <h1 className="font-semibold text-xl tracking-tight">Zorvyn Finance</h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">FinTech Dashboard</p>
-            </div>
+          <div className="flex items-center">
+            <img
+              src={brandLogo}
+              alt="NexVest logo"
+              className="h-10 w-auto object-contain"
+            />
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-2xl text-sm">
-              <span className="text-gray-500 dark:text-gray-400">Role:</span>
-              <select
-                value={currentRole}
-                onChange={(e) => setRole(e.target.value)}
-                className="bg-transparent outline-none font-medium cursor-pointer"
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 dark:text-gray-400">Role</span>
+              <div
+                className={`relative w-24 h-10 rounded-full p-1 border shadow-inner transition-all duration-300 ${
+                  darkMode
+                    ? 'bg-[linear-gradient(160deg,#0f1b35_0%,#182b52_55%,#1f3765_100%)] border-[#1b2f56]'
+                    : 'bg-[linear-gradient(160deg,#f2f3f5_0%,#e9ebee_100%)] border-[#dadde3]'
+                }`}
+                role="group"
+                aria-label="Select role"
               >
-                <option value="admin">Admin</option>
-                <option value="viewer">Viewer</option>
-              </select>
+                <motion.div
+                  className="absolute top-1 left-1 z-10 rounded-full"
+                  initial={false}
+                  animate={{
+                    x: currentRole === 'admin' ? 0 : 44,
+                    width: 44,
+                    height: 32,
+                    backgroundColor: darkMode ? '#1a2f54' : '#f3f4f6',
+                    boxShadow: darkMode
+                      ? '0 6px 14px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.06)'
+                      : '0 3px 10px rgba(17, 24, 39, 0.16), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+                  }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                />
+
+                <div className="relative z-20 grid grid-cols-2 h-full text-[11px] font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setRole('admin')}
+                    className={`rounded-full transition-colors ${
+                      currentRole === 'admin'
+                        ? darkMode
+                          ? 'text-blue-200'
+                          : 'text-blue-700'
+                        : darkMode
+                          ? 'text-blue-100/70'
+                          : 'text-gray-600'
+                    }`}
+                    aria-pressed={currentRole === 'admin'}
+                  >
+                    Admin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRole('viewer')}
+                    className={`rounded-full transition-colors ${
+                      currentRole === 'viewer'
+                        ? darkMode
+                          ? 'text-blue-200'
+                          : 'text-blue-700'
+                        : darkMode
+                          ? 'text-blue-100/70'
+                          : 'text-gray-600'
+                    }`}
+                    aria-pressed={currentRole === 'viewer'}
+                  >
+                    Viewer
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <button onClick={toggleDarkMode} className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            {/* Dark Mode Toggle */}
+            <ThemeToggle darkMode={darkMode} onClick={toggleDarkMode} />
 
             <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden p-3">
               {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -131,15 +195,27 @@ function App() {
                     : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
-                <span className="text-2xl opacity-80">{item.icon}</span>
+                <img
+                  src={item.icon}
+                  alt=""
+                  aria-hidden="true"
+                  className={`w-6 h-6 shrink-0 transition-all ${
+                    activeTab === item.id
+                      ? darkMode
+                        ? 'opacity-100 brightness-0 invert'
+                        : 'opacity-100'
+                      : darkMode
+                        ? 'opacity-80 brightness-0 invert'
+                        : 'opacity-70'
+                  }`}
+                />
                 <span className="text-[15px]">{item.label}</span>
               </motion.button>
             ))}
           </nav>
 
           <div className="mt-12 text-xs text-gray-400 dark:text-gray-500 px-4 hidden lg:block">
-            Zorvyn FinTech Pvt. Ltd.<br />
-            Assignment Dashboard
+            Assignment Dashboard<br />
           </div>
         </aside>
 
@@ -172,30 +248,48 @@ function App() {
 
           {activeTab === 'transactions' && (
             <>
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                   <h2 className="text-3xl font-semibold tracking-tight">Transactions</h2>
                   <p className="text-gray-500 dark:text-gray-400">Manage your income and expenses</p>
                 </div>
                 
-                {currentRole === 'admin' && (
-                  <button 
-                    onClick={openAddModal}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-medium transition-all active:scale-95"
-                  >
-                    <Plus size={20} />
-                    Add Transaction
-                  </button>
-                )}
-                {currentRole === 'viewer' && (
-                  <div className="text-sm text-gray-500 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-2xl">
-                    Viewer mode: Read-only
-                  </div>
-                )}
+                <div className="flex items-center gap-3">
+                  {currentRole === 'admin' && (
+                    <button 
+                      onClick={openAddModal}
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-medium transition-all active:scale-95"
+                    >
+                      <Plus size={20} />
+                      Add Transaction
+                    </button>
+                  )}
+                  
+                  {currentRole === 'viewer' && (
+                    <div className="text-sm text-gray-500 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-2xl">
+                      Viewer mode: Read-only
+                    </div>
+                  )}
+                </div>
               </div>
 
               <TransactionFilters />
-              <TransactionTable openEditModal={openEditModal} />   {/* We'll update table next */}
+              
+              {/* Grouping Toggle - Simple */}
+              <div className="mb-6 flex gap-2">
+                <button
+                  className="px-5 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                >
+                  Group by Category
+                </button>
+                <button
+                  className="px-5 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                >
+                  Group by Month
+                </button>
+              </div>
+
+              <TransactionTable openEditModal={openEditModal} />
             </>
           )}
 
